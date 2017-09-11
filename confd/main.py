@@ -19,6 +19,7 @@ if __name__ == '__main__':
                 haproxy.render_haproxy_cfg(servicios)
                 shutil.copy('/tmp/haproxy.cfg','/etc/haproxy/')
                 supervisor.reload_haproxy(s)
-            time.sleep(5)
         except Exception as e:
             logging.exception(e)
+
+        time.sleep(5)

@@ -41,11 +41,9 @@ def obtener_servicios(servicios={}):
                             procesadas.add(snombre)
 
                         except Exception as e1:
-                            modificado = True
                             logging.exception(e1)
 
                 except Exception as e2:
-                    modificado = True
                     logging.exception(e2)
 
                 ''' elimino los que ya no existen '''
@@ -65,11 +63,9 @@ def obtener_servicios(servicios={}):
                 procesados.add(servicio_key)
 
             except Exception as e3:
-                modificado = True
                 logging.exception(e3)
 
     except Exception as e4:
-        modificado = True
         logging.exception(e4)
 
     ''' elimino los servicios que ya no existen '''
