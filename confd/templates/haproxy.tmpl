@@ -11,44 +11,34 @@ defaults
     timeout client  50000
     timeout server  50000
 
-
 frontend http_frontend
     bind *:80
-    {{ range $service := ls "/services" }}
-    {{ if ls (printf "/services/%s/upstream" $service) }}
-    acl {{ $service }}_acl path_beg {{ if exists (printf "/services/%s/location" $service) }}{{ getv (printf "/services/%s/location" $service) }}{{ else }}/{{ $service }}{{ end }}
-    {{ if exists (printf "/services/%s/location" $service) }}
-    {{ if eq (getv (printf "/services/%s/location" $service)) "/" }}
-    default_backend {{ $service }}_backend
-    {{ else }}
-    use_backend {{ $service }}_backend if {{ $service }}_acl
-    {{ end }}
-    {{ else }}
-    use_backend {{ $service }}_backend if {{ $service }}_acl
-    {{ end }}
-    {{ end }}
-    {{ end }}
+    default_backend df_backend
+{% for srv in services %}
+    acl {{srv.nombre}}_acl path_beg {{srv.url}}
+    use_backend {{srv.nombre}}_backend if {{srv.nombre}}_acl
+{% endfor %}
 
-{{ range $service := ls "/services" }}
-{{ if ls (printf "/services/%s/upstream" $service) }}
-backend {{ $service }}_backend
-  balance roundrobin
-  {{ range $srv := ls (printf "/services/%s/upstream" $service) }}
-  server {{ $srv }} {{ getv (printf "/services/%s/upstream/%s" $service $srv) }} check
-  {{ end }}
-{{ end }}
-{{ end }}
+backend df_backend
+    server s1 127.0.0.1:9000
 
+{% for srv in services %}
+backend {{srv.nombre}}_backend
+    balance roundrobin
+{% for nombre, server in srv.servers %}
+    server {{nombre}} {{server}} check
+{% endfor %}
+{% endfor %}
 
 listen stats
-   bind *:1936
-   mode http
-   stats enable
-   stats scope http
-   stats scope www
-   stats scope static
-   stats scope static_httpclose
-   stats realm Haproxy\ Statistics
-   stats uri /
-   #stats auth haproxy:YOURPASSWORDHERE
-   stats refresh 5s
+    bind *:1936
+    mode http
+    stats enable
+    stats refresh 5s
+    #stats scope http
+    #stats scope www
+    #stats scope static
+    #stats scope static_httpclose
+    stats realm Estadisticas
+    stats uri /
+    #stats auth haproxy:YOURPASSWORDHERE
