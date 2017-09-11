@@ -15,7 +15,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY entrypoint.sh /
 COPY lighttpd/lighttpd.conf /etc/lighttpd/
-ADD confd /root
+RUN mkdir /root/confd
+ADD confd /root/confd
 ADD supervisor/conf.d /etc/supervisor/conf.d
 
 COPY requirements.txt /

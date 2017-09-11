@@ -1,10 +1,24 @@
 #!/usr/local/bin/python
+from pprint import pprint
+import time
+import logging
+import shutil
 
 import confd
 import haproxy
-from pprint import pprint
+import supervisor
 
 if __name__ == '__main__':
-    servicios = confd.obtener_servicios()
-    pprint(servicios)
-    haproxy.render_haproxy_cfg(servicios)
+    s = supervisor.get_supervisor()
+    servicios = {}
+    while True:
+        try:
+            modificado = confd.obtener_servicios(servicios)
+            if modificado:
+                pprint(servicios)
+                haproxy.render_haproxy_cfg(servicios)
+                shutil.copy('/tmp/haproxy.cfg','/etc/haproxy/')
+                supervisor.reload_haproxy(s)
+            time.sleep(5)
+        except Exception as e:
+            logging.exception(e)

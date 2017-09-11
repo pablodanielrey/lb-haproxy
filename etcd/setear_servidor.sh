@@ -7,5 +7,5 @@
 #
 #
 
-curl http://127.0.0.1:2379/v2/keys/services/$1/location -XPUT -d value="$2"
-curl http://127.0.0.1:2379/v2/keys/services/$1/upstream/"$3" -XPUT -d value="$4"
+curl http://127.0.0.1:2379/v2/keys/services/$1/location -XPUT -d value="$2" -d ttl="13"
+curl http://127.0.0.1:2379/v2/keys/services/$1/upstream/"$3" -XPUT -d value="$4" -d ttl="13"
