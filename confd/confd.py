@@ -1,11 +1,13 @@
 import etcd
 import logging
+import os
 
 def obtener_servicios(servicios={}):
     modificado = False
     procesados = set()
+    host = os.environ['ETCD_HOST']
 
-    c = etcd.Client(host='192.168.0.3', port=2379, protocol='http')
+    c = etcd.Client(host=host, port=2379, protocol='http')
     try:
         for s in c.get('/services').children:
             try:
