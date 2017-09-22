@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo docker run \
-	--rm \
+	--rm -d \
 	-p 2379:2379 \
 	-p 2380:2380 \
 	-p 4001:4001 \
