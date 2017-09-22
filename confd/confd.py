@@ -60,7 +60,7 @@ def obtener_servicios(servicios={}):
                     'modificado': s.modifiedIndex,
                     'creado': s.createdIndex,
                     'url': c.get(s.key + '/location').value,
-                    'path': c.get(s.key + '/path').value
+                    'path': c.get(s.key + '/path').value,
                     'servidores': servidores
                 }
                 procesados.add(servicio_key)
