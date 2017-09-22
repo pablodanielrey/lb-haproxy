@@ -16,7 +16,9 @@ frontend http_frontend
     default_backend df_backend
 {% for srv in services %}
     acl {{services[srv].nombre}}_acl hdr_beg(host) -i {{services[srv].url}}
-    use_backend {{services[srv].nombre}}_backend if {{services[srv].nombre}}_acl
+    acl {{services[srv].nombre}}_path__acl path_beg {{services[srv].path}}
+
+    use_backend {{services[srv].nombre}}_backend if {{services[srv].nombre}}_acl and {{services[srv].nombre}}_path__acl
 {% endfor %}
 
 backend df_backend
