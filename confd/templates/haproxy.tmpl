@@ -15,20 +15,23 @@ frontend http_frontend
     bind *:80
     default_backend df_backend
 {% for srv in services %}
-    acl {{services[srv].nombre}}_acl hdr_beg(host) -i {{services[srv].url}}
-    acl {{services[srv].nombre}}_path__acl path_beg {{services[srv].path}}
-
-    use_backend {{services[srv].nombre}}_backend if {{services[srv].nombre}}_acl {{services[srv].nombre}}_path__acl
+    acl {{srv.nombre}}_acl hdr_beg(host) -i {{srv.url}}
+    acl {{srv.nombre}}_path_acl path_beg {{srv.path}}
 {% endfor %}
+
+{% for srv in services|sort(attribute='path', reverse=True) %}
+    use_backend {{srv.nombre}}_backend if {{srv.nombre}}_acl {{srv.nombre}}_path_acl
+{% endfor %}
+
 
 backend df_backend
     server s1 127.0.0.1:9000
 
 {% for srv in services %}
-backend {{services[srv].nombre}}_backend
+backend {{srv.nombre}}_backend
     balance roundrobin
-{% for server in services[srv].servidores %}
-    server {{services[srv].servidores[server].nombre}} {{services[srv].servidores[server].server}} check
+{% for server in srv.servidores %}
+    server {{srv.servidores[server].nombre}} {{srv.servidores[server].server}} check
 {% endfor %}
 {% endfor %}
 
